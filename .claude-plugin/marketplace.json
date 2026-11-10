@@ -1,0 +1,17 @@
+{
+  "name": "selectd",
+  "owner": {
+    "name": "Selectd AI",
+    "url": "https://selectd.ai"
+  },
+  "metadata": {
+    "description": "Selectd plugins for Claude Code: ask whether a CVE affects your company and send server software lists for review."
+  },
+  "plugins": [
+    {
+      "name": "selectd",
+      "source": "./plugins/selectd",
+      "description": "Selectd Vulnerability Agent in Claude Code: check_cve (read) and submit_inventory (Pro) via the Selectd MCP server with browser sign-in."
+    }
+  ]
+}
