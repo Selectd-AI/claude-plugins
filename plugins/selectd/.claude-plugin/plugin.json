@@ -1,7 +1,7 @@
 {
   "name": "selectd",
-  "version": "0.1.0",
-  "description": "Selectd Vulnerability Agent for Claude Code: ask whether a CVE affects your company (check_cve) and send a server's software list for review (submit_inventory, Pro). Sign in once in the browser.",
+  "version": "0.2.0",
+  "description": "Selectd Vulnerability Agent for Claude Code: ask whether a CVE affects your company (check_cve), send a server's software list for review (submit_inventory, Pro) and run the weekly review over findings of your security tools (submit_findings / get_priorities, Pro). Sign in once in the browser.",
   "author": {
     "name": "Selectd AI",
     "url": "https://selectd.ai"
@@ -9,6 +9,15 @@
   "homepage": "https://selectd.ai/docs/ai-assistants/claude-code",
   "repository": "https://github.com/selectd-ai/claude-plugins",
   "license": "MIT",
-  "keywords": ["selectd", "security", "vulnerability", "cve", "inventory", "mcp"],
+  "keywords": [
+    "cve",
+    "findings",
+    "inventory",
+    "mcp",
+    "prioritization",
+    "security",
+    "selectd",
+    "vulnerability"
+  ],
   "mcpServers": "./.mcp.json"
 }
