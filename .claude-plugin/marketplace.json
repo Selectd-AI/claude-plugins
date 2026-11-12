@@ -5,13 +5,13 @@
     "url": "https://selectd.ai"
   },
   "metadata": {
-    "description": "Selectd plugins for Claude Code: ask whether a CVE affects your company and send server software lists for review."
+    "description": "Selectd plugins for Claude Code: ask whether a CVE affects your company, hand over findings and documents to your Security Brain, and confirm everything in Selectd."
   },
   "plugins": [
     {
       "name": "selectd",
       "source": "./plugins/selectd",
-      "description": "Selectd Vulnerability Agent in Claude Code: check_cve (read) and submit_inventory (Pro) via the Selectd MCP server with browser sign-in."
+      "description": "Selectd Security Brain in Claude Code: check_cve, submit_inventory, weekly findings review, document recipes (pentest report, scanner export, questionnaire) and a status report, via the Selectd MCP server with browser sign-in."
     }
   ]
 }
