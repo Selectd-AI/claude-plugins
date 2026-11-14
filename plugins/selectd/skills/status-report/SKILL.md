@@ -16,8 +16,14 @@ Reads only. Hands nothing over.
    person for it, or start without a cursor = the last 7 days).
    - Collect `events` and `overlap_events`, **deduplicate by `event_id`**; while `has_more` is true, call again with
      `next_cursor`.
-   - `cursor_expired`: write "Report gap: changes before <date> are not covered", read `get_priorities` and
-     `get_security_context` again and call `get_changes` without a cursor.
+   - Two different gaps, both shown as a visible **"Report gap"** line in the report (never silently skipped):
+     - **`cursor_expired`** is an *error* (the cursor is older than 90 days; no events come back): write "Report gap: changes
+       before <date> are not covered", read `get_priorities` and `get_security_context` again and call `get_changes`
+       without a cursor.
+     - **`resync_required: true`** comes in a *successful* answer (`overlap_truncated`: more than 100 late events in the
+       overlap window, the overlap list was cut). Process the events you got, but write "Report gap: some changes around
+       <as_of of this answer> may be missing (overlap truncated)", then read `get_priorities` and `get_security_context`
+       again before writing the report. Keep paging with `next_cursor` as usual.
    - `rate_limited` (one call per minute): wait; if you stop, keep only the **last fully processed** `next_cursor`.
 
 ## 2. Event mode (only when the person names a vulnerability that is in the news)
