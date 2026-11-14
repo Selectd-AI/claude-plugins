@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0 (unreleased - released after acceptance step 1; no directory listing before step 2)
+## 0.4.0 (2026-11-14 - released after acceptance step 1; no directory listing before step 2; includes 0.3.0)
 - **weekly-run (Aikido):** stable `source_finding_id` from the tool's own id; `source_group_id` only from Aikido's
   `issue_group_id`; the batch key is bound to the content (same key, same payload); limits 500 findings / 768 KiB / 1 MiB
   are met by splitting, never by cutting; an asset the tool does not name stays "unknown".
