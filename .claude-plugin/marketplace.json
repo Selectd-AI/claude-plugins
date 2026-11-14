@@ -11,7 +11,7 @@
     {
       "name": "selectd",
       "source": "./plugins/selectd",
-      "description": "Selectd Security Brain in Claude Code: check_cve, submit_inventory, weekly findings review, document recipes (pentest report, scanner export, questionnaire) and a status report, via the Selectd MCP server with browser sign-in."
+      "description": "Selectd Security Brain in Claude Code: check_cve, submit_inventory, weekly findings review, document recipes (pentest report, scanner export, questionnaire), a guided interview and a status report, via the Selectd MCP server with browser sign-in."
     }
   ]
 }
