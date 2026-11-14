@@ -1,7 +1,7 @@
 {
   "name": "selectd",
-  "version": "0.4.0",
-  "description": "Selectd Security Brain for Claude Code: ask whether a CVE affects your company (check_cve), send a server's software list for review (submit_inventory, Pro), run the weekly review over findings of your security tools (submit_findings / get_priorities, Pro), read pentest reports, scanner exports and questionnaires into the Brain for your confirmation, write down what you know in a guided interview (proposals only), and write a status report. Sign in once in the browser.",
+  "version": "0.5.0",
+  "description": "Selectd Security Brain for Claude Code: ask whether a CVE affects your company (check_cve), send a server's software list for review (submit_inventory, Pro), run the weekly review over findings of your security tools (submit_findings / get_priorities, Pro), read pentest reports, scanner exports and questionnaires into the Brain for your confirmation, write down what you know in a guided interview (proposals only), check a planned change before it is made, get help with one single finding, and write a status report with the changes since the last one (proposals only after an explicit yes). Sign in once in the browser.",
   "author": {
     "name": "Selectd AI",
     "url": "https://selectd.ai"
