@@ -56,3 +56,8 @@ Report the result: received / already received, accepted count, rejected rows wi
 - `idempotency_key_reused` → use a new key.
 
 Data note: the AI service processes the collected list including the host name before it reaches Selectd.
+
+- **`secret_detected`**: Selectd refused the whole call and names every affected field (`field`, and `fields` for all of
+  them, e.g. `rows[3].package_name`), never the value; nothing of that call was stored and no credit was used. Remove the
+  value from exactly those fields (or replace it with `[redacted]`) and send the call again with a new idempotency key.
+  Never send the value anywhere else - not in another field, a note, another tool or a message.

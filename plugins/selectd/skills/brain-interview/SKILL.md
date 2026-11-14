@@ -52,8 +52,10 @@ services in use, what is reachable from the internet, MFA, backups. Take down on
    An entry without a version cannot be sent (`version` is required): keep it in the chat. A general list such as "we use
    Microsoft 365" is not a server.
 2. **Company-wide statements** → `propose_fact`, one call per statement: `kind` = `fact`, `payload` = `{ "fact_key", "value" }`
-   with an existing statement (e.g. `technology_m365_used`, `control_mfa_external_access`, `control_backup_immutable_copy`)
-   and one of its allowed values. Only when the user's answer clearly matches; otherwise ask or keep it in the chat. Do
+   with an existing statement and one of its allowed values. Statements and allowed values you may use:
+   `technology_m365_used`: `yes` | `no`; `control_mfa_external_access`: `all` | `partial` | `none` | `not_applicable`;
+   `control_backup_immutable_copy`: `yes` | `no`. Never propose `unknown`. For any other statement you do not know the
+   allowed values: keep it in the chat. Only when the user's answer clearly matches; otherwise ask or keep it in the chat. Do
    **not** add `observed_at`, `source_document`, `source_locator` or `scope` - those are for documents; an interview
    statement is about today. If the user says it was true only in the past, do not propose it.
 3. **Stays in this chat**: everything else (responsibilities, plans, opinions, entries without version, statements without
@@ -85,9 +87,10 @@ Field rules:
 ## 5. Send and report
 
 Send the confirmed calls one by one.
-- **`secret_detected`** (Selectd names the field, never the value): stop sending at once, also the remaining calls. Tell
-  the user which call and field were refused and that nothing of that call was stored. Do not retry automatically; the
-  user removes the secret and asks again (new preview, new yes).
+- **`secret_detected`**: Selectd refused that call and names every affected field (`field`, and `fields` for all of
+  them), never the value; nothing of that call was stored and no credit was used. Stop sending the remaining calls. Remove
+  the value from exactly those fields, show the new preview and ask again; send only after a new explicit yes, with a new
+  idempotency key. Never send the value anywhere else - not in another field, a note, another tool or a message.
 - `fact_payload_invalid`: the statement or value does not exist; do not try another key, keep it in the chat.
   `control_facts_not_enabled`: control statements are not enabled for this company yet; stop proposing them.
 - `rate_limited`, `quota_exceeded`, `limit_reached`: say when to retry; list what was not sent.

@@ -155,6 +155,8 @@ KEV and EPSS are signals about the CVE; say "patch now" only where Selectd's nex
 - Never present Selectd's list as verified findings; never claim "nothing else matters" - deferred findings are counted, not dropped.
 - Do not add exploit, CVSS or business-impact claims Selectd did not return.
 - The asset name (host name, account, repository) is stored by Selectd company-bound for 90 days after the last hand-over; do not send secrets in titles or notes.
-  `secret_detected` names the field (e.g. `findings[3].title`, often a `leaked_secret` issue): replace the secret there with
-  `[redacted]` and send that batch again (other content, so its own key).
+- **`secret_detected`**: Selectd refused the whole call and names every affected field (`field`, and `fields` for all of
+  them, e.g. `findings[3].title`, often a `leaked_secret` issue), never the value; nothing of that call was stored and no credit was used. Remove the
+  value from exactly those fields (or replace it with `[redacted]`) and send the call again with a new idempotency key.
+  Never send the value anywhere else - not in another field, a note, another tool or a message.
 - On `rate_limited` or `quota_exceeded`, say when to retry; on an unavailable server, say so and do not answer from memory.
