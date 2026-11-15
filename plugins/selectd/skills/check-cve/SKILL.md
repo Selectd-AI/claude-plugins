@@ -19,7 +19,7 @@ Selectd answers with one of three verdicts. Keep the wording precise:
 
 - **affected** – name the affected product(s) and version(s) Selectd found, the affected range, and where the version came from (for example "stated via your agent" or "confirmed"). Point to the open case in Selectd if one is given.
 - **not affected (in the checked scope)** – say exactly that and name the scope Selectd checked. Never widen it to "you are not affected".
-- **unknown** – give the reason and the open question Selectd needs answered (for example a missing version). Suggest how the user can answer it in Selectd.
+- **unknown** – give the reason, then pass on each entry of `clarify.items` by its **`text`** as it stands (in the user's language, without changing what it asks for), with its link if there is one. Offer to send something only for an item of class `proposal`; for `terminal`, `wait` and `source_check` items propose nothing and do not offer to send anything.
 
 If the answer contains a `dayside` entry, add: "Public Selectd briefing on this CVE (general guidance, not specific to your company): <title> – <url>".
 

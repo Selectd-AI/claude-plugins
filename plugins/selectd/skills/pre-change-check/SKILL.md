@@ -31,12 +31,14 @@ One line per claim, in a table: **Claim | Status | Evidence | As of**.
 
 ## 4. "Unknown": use Selectd's clarification block, nothing else
 When `check_cve` answers `unknown`, it carries `clarify.items`. Use them exactly; never interpret the reason codes yourself.
-- **`proposal`**: ask the person the fixed question (text of the item's `question_id`), at most 3 questions in total. From
+Every item has its fixed text in **`text`**: pass it on as it stands (in the person's language, same content).
+- **`proposal`**: ask the person the item's `text` as the question, at most 3 questions in total. From
   the answer, build the call described in `input` (`submit_inventory`, `complete=false`, `collected_at` = when the person last
   checked). Show **every field** as it will go out and ask "Shall I send exactly this?". Send only after a **separate,
   explicit yes to that preview**; reuse its idempotency key only to retry the same call. Report the `submission_id` and say:
   "Nothing counts yet: an owner or admin takes this list over in Selectd."
-- **`terminal`**: pass the hint on with its link (`case_url` / `list_url`) if there is one. Do not answer it, do not propose.
+- **`terminal`**: pass the item's `text` on with its link (`case_url` / `list_url`) if there is one. Do not answer it, do not
+  propose, do not offer to send anything.
 - **`wait`** and **`source_check`**: say that the state is unknown and that no verdict follows from it. Do not propose.
 - No answer from the person, a vague answer or "probably": nothing is sent.
 

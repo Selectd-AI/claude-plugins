@@ -30,10 +30,13 @@ date that holds this finding (`held_by_decision`), the system's open points, com
 
 ## 4. "Unknown": use Selectd's clarification block, nothing else
 When `check_cve` answers `unknown`, it carries `clarify.items`. Use them exactly; never interpret the reason codes yourself.
-- **`proposal`**: ask the fixed question of the item's `question_id` (at most 3 questions). Build the call from `input`
+Every item has its fixed text in **`text`**: pass it on as it stands (in the person's language, same content), never a
+paraphrase that asks for something else.
+- **`proposal`**: ask the item's `text` as the question (at most 3 questions). Build the call from `input`
   (`submit_inventory`, `complete=false`). Show every field, ask "Shall I send exactly this?", send only after a **separate,
   explicit yes to that preview**. Report the `submission_id`: "Nothing counts yet: an owner or admin takes it over in Selectd."
-- **`terminal`**: pass the hint on with its link if there is one; do not answer it and do not propose anything.
+- **`terminal`**: pass the item's `text` on with its link if there is one; do not answer it, do not propose anything and do
+  not offer to send anything.
 - **`wait`** / **`source_check`**: the state is unknown and no verdict follows from it; do not propose anything.
 
 ## Rules

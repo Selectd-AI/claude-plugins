@@ -31,7 +31,8 @@ For each named CVE answer three questions, each with source, as-of date and scop
 - **Actively exploited?** What Selectd shows: a `kev_listed` or `kev_withdrawn` entry in `get_changes` (a withdrawal names the
   earlier entry and is a correction, not an all-clear), or exploitation evidence in `check_cve`. Otherwise: "unknown".
 - **Does it affect us?** **`check_cve`**: affected / not affected in the checked scope / unknown with Selectd's
-  clarification block (`clarify.items`: pass terminal hints on with their link; no questions and no proposals in a report).
+  clarification block (`clarify.items`: pass each item's `text` on as it stands, with its link; no questions and no proposals
+  in a report).
 - **Broad or targeted?** "unknown - Selectd has no structured source for this yet." Do not fill it from news text.
 Then: the current state and what changed since the last report.
 
