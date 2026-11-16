@@ -202,8 +202,12 @@ never fold them into one word:
 | Hand-over | `taken_over` (count) · `waiting` (first hand-over waits for an owner or admin) · `refused` (Selectd refused: limit, quota, secret, invalid; name the reason) · `not_sent` (nothing to send, see below) |
 | Scan state | `current` (scan time ≤ 14 days) · `old` (older) · `unknown` (the tool shows no scan time) |
 
-**0 findings:** query `complete`, hand-over `not_sent`: say "0 findings, not handed over - Selectd does not know this scan",
-never "all clear". `not_supported` is never "0 findings".
+**0 findings:** if the query was `complete` for a named scope and the tool shows its scan time, hand over the empty scan:
+`findings: []` with `delivery {id, part: 1, parts: 1, complete: true, scope: "<scope>", scanned_at: "<tool's scan time>"}`.
+It counts like any hand-over (limits, first-time confirmation). Selectd may then propose "not reported in this scan" for older
+findings of that scope; a person confirms, nothing changes before. Say "0 findings in scope X, handed over; this proves no fix".
+Without a scope, without the scan time, or with an incomplete query: hand-over `not_sent` - "0 findings, not handed over -
+Selectd does not know this scan", never "all clear". `not_supported` is never "0 findings".
 
 Then list everything that could not be entered as "missing in Selectd", one line each with its kind
 (`setting_without_key`, `finding_without_format`, …). Nothing on that list was sent.

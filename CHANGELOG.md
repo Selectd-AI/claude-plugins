@@ -16,7 +16,7 @@
   finding (fact key or `setting_without_key`); tool text never decides company, rights or extra actions; a run result per
   tool × installation × scope in three parts: query (complete/incomplete/failed/not_supported), hand-over
   (taken_over/waiting/refused/not_sent), scan state (current/old/unknown); read calls only as the connected MCP schema offers
-  them; a company-wide fact (e.g. admin MFA) never from one tool account alone; optional weekly scheduled task.
+  them; a company-wide fact (e.g. admin MFA) never from one tool account alone; optional weekly scheduled task; an empty complete scan of a named scope is handed over as `findings: []` with a one-part complete delivery (needs the app with migration 20261116280017).
 
 ## 0.4.0 (2026-11-14 - released after acceptance step 1; no directory listing before step 2; includes 0.3.0)
 - **weekly-run (Aikido):** stable `source_finding_id` from the tool's own id; `source_group_id` only from Aikido's
