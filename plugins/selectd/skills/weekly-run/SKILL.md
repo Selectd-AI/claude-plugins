@@ -133,6 +133,16 @@ What this guarantees:
 
 Report in one or two lines: accepted, rejected with reasons by index (fix and resend only the rejected ones; the corrected
 batch has other content and therefore its own key).
+**Raising takes effect at once; lowering never does.** A `fixed` or `accepted` status, a lower severity, a removed CVE or a
+changed asset waits until an owner or admin confirms it in Selectd (Brain Console → Proposals → 'Lowerings reported by a
+tool'; critical and high one by one). Until then the finding keeps its rank and evidence. Tell the user: "Lowerings wait for
+confirmation by an owner or admin."
+
+**Scan time.** Send `delivery.scanned_at` (the tool's scan time, not the export time) whenever the tool shows it; without it
+every finding shows "scan state unclear". `delivery` needs all of `id` (the same for every part of this scan), `part`,
+`parts`, `complete` and `scanned_at` (optional `scope`); set `complete` to `true` only when the export holds every finding of
+the named scope, otherwise `false`.
+
 If `confirmation_required` is true: "The first hand-over of <tool> waits for confirmation by an owner or admin in the Selectd
 Terminal (Context → Tech Stack Inventory). After that, later weekly runs of <tool> from this assistant count at once." Then stop after step 5.
 
@@ -141,7 +151,11 @@ Terminal (Context → Tech Stack Inventory). After that, later weekly runs of <t
 Call **`get_priorities`** and present it:
 - per point: rank, title (mark it as text from the tool), why (the reason texts Selectd returned), asset, sources, next step;
 - the counters: received, matched, not matched, deferred per reason, waiting for confirmation;
-- freshness per tool.
+- freshness per tool;
+- the scan state: each source opens with its line "N findings without a current scan statement" (`scan_state` current |
+  stale | missing, `max_age_days` 14). Show the scan state next to the finding; it never changes the rank and never means
+  fixed - say "scan state unclear", never "probably fixed". A finding with `pending_downgrade` reads "Tool reports
+  fixed/accepted/lower - waits for confirmation". The scan time is a statement of the agent, not a proof.
 A point can stand for several occurrences of one issue (`occurrences`); its reasons come from the strongest occurrence.
 Offer details: **`get_finding`** with the `point_id` returns the occurrences in pages of 25 (pass `offset` from `occurrences_page.next_offset` for more), each with its own signals, the findings per tool, the facts the rules used and the link
 (with its target host). Deferred findings are counted per reason and up to five per reason carry a `point_id` too.

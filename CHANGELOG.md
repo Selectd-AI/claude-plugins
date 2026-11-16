@@ -6,6 +6,11 @@
   a done measure is never recorded as an accepted risk or as "not used"; everything else comes back as "missing in
   Selectd" with its kind (decision without case, measure without finding, setting without key).
 
+- **weekly-run, priorities (OP-03 scan state):** raising takes effect at once, every lowering waits for an owner or admin;
+  `delivery.scanned_at` with the tool's scan time; the scan state per source and finding is shown, never changes the rank and
+  never means fixed; `pending_downgrade` reads "waits for confirmation". **priorities:** "Checked a finding yourself" with
+  `propose_fact` kind `finding_check`. Release only after the `asa-agent-api` EF with OP-03 is deployed on Production.
+
 ## 0.4.0 (2026-11-14 - released after acceptance step 1; no directory listing before step 2; includes 0.3.0)
 - **weekly-run (Aikido):** stable `source_finding_id` from the tool's own id; `source_group_id` only from Aikido's
   `issue_group_id`; the batch key is bound to the content (same key, same payload); limits 500 findings / 768 KiB / 1 MiB
