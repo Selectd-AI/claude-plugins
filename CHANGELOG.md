@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+- **handover (new, OP-06):** end-of-session hand-over of what was decided or done, only through the existing ways
+  (`submit_findings` status `fixed`, `propose_fact` kinds `finding_check`, `decision`, `fact`) after an explicit "send";
+  a done measure is never recorded as an accepted risk or as "not used"; everything else comes back as "missing in
+  Selectd" with its kind (decision without case, measure without finding, setting without key).
+
 ## 0.4.0 (2026-11-14 - released after acceptance step 1; no directory listing before step 2; includes 0.3.0)
 - **weekly-run (Aikido):** stable `source_finding_id` from the tool's own id; `source_group_id` only from Aikido's
   `issue_group_id`; the batch key is bound to the content (same key, same payload); limits 500 findings / 768 KiB / 1 MiB
