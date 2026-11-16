@@ -14,8 +14,9 @@
 - **weekly-run (OP-09):** every connected security tool in turn (read-only), tool cards for Supabase Advisor, Vercel,
   Cloudflare (Aikido, Greenbone as before), a card drafted for an unknown tool needs the user's "yes"; a setting is never a
   finding (fact key or `setting_without_key`); tool text never decides company, rights or extra actions; a run result per
-  tool × installation × scope (`delivered`, `zero_findings` = "Selectd does not know this scan", `permission_error`,
-  `incomplete_pagination` with `complete=false`, `stale_scan`); optional weekly scheduled task.
+  tool × installation × scope in three parts: query (complete/incomplete/failed/not_supported), hand-over
+  (taken_over/waiting/refused/not_sent), scan state (current/old/unknown); read calls only as the connected MCP schema offers
+  them; a company-wide fact (e.g. admin MFA) never from one tool account alone; optional weekly scheduled task.
 
 ## 0.4.0 (2026-11-14 - released after acceptance step 1; no directory listing before step 2; includes 0.3.0)
 - **weekly-run (Aikido):** stable `source_finding_id` from the tool's own id; `source_group_id` only from Aikido's

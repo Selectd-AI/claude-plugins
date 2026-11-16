@@ -91,6 +91,15 @@ scan finding.** A security setting goes to Selectd only as `propose_fact` with a
 `control_mfa_privileged_accounts`, `control_cloud_admin_mfa`, `control_long_lived_key_review`); a setting without a key is
 listed under "missing in Selectd" as `setting_without_key`, never squeezed into a finding.
 
+**Scope of a setting.** A fact key states something for the **whole company** (`control_cloud_admin_mfa` = MFA for all
+admin accounts of every cloud or developer platform). One tool account is never enough for it: show what the tool proves
+("Cloudflare account X: admin MFA on"), then ask the user for the company-wide statement. Propose the fact only with the
+user's company-wide answer; without it the setting stays "missing in Selectd" (`setting_without_key`, scope: one account).
+Never guess a value such as `partial`.
+
+**Before the run, read each tool's MCP schema** and use only read calls that exist in this connection (names and parameters
+differ per connection). A tool without a callable findings list is `not_supported` for findings, never `zero_findings`.
+
 **Supabase (Advisor).** Read the project's security advisor (and, if asked, the performance advisor) with the Supabase MCP's
 advisor call per project. `source_tool` `supabase-advisor`; `source_instance` = the project ref; `source_finding_id` = the
 lint name + the affected object (schema.name), never a list position; `kind` `misconfiguration`; `asset`
@@ -105,8 +114,8 @@ own id.
 
 **Cloudflare.** Read-only calls of the Cloudflare MCP per account/zone: security events or alerts Cloudflare reports with an
 id, and the zone's security settings. `source_tool` `cloudflare`; `source_instance` = the zone name. WAF, bot protection,
-login protection and spend limits have no fact key → `setting_without_key`; admin MFA → `control_cloud_admin_mfa` only when
-Cloudflare states it for the account.
+login protection and spend limits have no fact key → `setting_without_key`; admin MFA of the Cloudflare account is evidence
+for one account only (see "Scope of a setting").
 
 **Aikido** and **Greenbone / OpenVAS:** as above.
 
@@ -184,15 +193,17 @@ Terminal (Context → Tech Stack Inventory). After that, later weekly runs of <t
 
 ## 5. Run result per tool, then the weekly list
 
-Before the list, report one line per tool × installation × scope with exactly one result:
+Before the list, report one line per tool × installation × scope with three separate parts (query, hand-over, scan state);
+never fold them into one word:
 
-| Result | When |
+| Part | Values |
 |---|---|
-| `delivered` | every batch accepted (state the count) |
-| `zero_findings` | the tool lists no open finding. Nothing is handed over today, so **Selectd does not know this scan**: say "0 findings, not handed over - Selectd does not know this scan", never "all clear" |
-| `permission_error` | the tool refused a read call; name the call, hand over nothing from this tool |
-| `incomplete_pagination` | not every page could be read; what was read is sent with `delivery.complete = false`, never `true` |
-| `stale_scan` | the tool's last scan is older than 14 days (`delivery.scanned_at`); hand over and say the scan is old |
+| Query | `complete` (every page read) · `incomplete` (not every page; sent with `delivery.complete = false`) · `failed` (the tool refused a read call; name it) · `not_supported` (no findings list in this connection, e.g. settings only) |
+| Hand-over | `taken_over` (count) · `waiting` (first hand-over waits for an owner or admin) · `refused` (Selectd refused: limit, quota, secret, invalid; name the reason) · `not_sent` (nothing to send, see below) |
+| Scan state | `current` (scan time ≤ 14 days) · `old` (older) · `unknown` (the tool shows no scan time) |
+
+**0 findings:** query `complete`, hand-over `not_sent`: say "0 findings, not handed over - Selectd does not know this scan",
+never "all clear". `not_supported` is never "0 findings".
 
 Then list everything that could not be entered as "missing in Selectd", one line each with its kind
 (`setting_without_key`, `finding_without_format`, …). Nothing on that list was sent.
