@@ -28,7 +28,7 @@ Selectd. You never confirm anything.
 | What happened | Tool and fields |
 |---|---|
 | The security tool now reports a finding as fixed | `submit_findings` with the finding and `status: "fixed"` (same `source_tool`, `source_instance`, `source_finding_id` as before). The lowering waits for an owner or admin. |
-| You checked a finding at its source and found it fixed | `propose_fact` with `kind: "finding_check"`, payload `{ finding_id, checked_at: "YYYY-MM-DD", result: "fixed", evidence_locator? }`. Only `fixed` exists; a check that found the problem still present is no hand-over. |
+| You checked a finding at its source and found it fixed | `propose_fact` with `kind: "finding_check"`, payload `{ finding_id, checked_at: "YYYY-MM-DD", result: "fixed", evidence_locator? }`. Only `fixed` exists; a check that found the problem still present is no hand-over. After confirmation the finding leaves the weekly list until its date, and returns earlier if the tool reports it again or the situation changes materially (a CVE of it newly listed as exploited, a host of its asset newly publicly visible). |
 | The user accepts the risk of an open case until a date | `propose_fact` with `kind: "decision"`, payload `{ case_id, reason (20-1000 chars), accountable_role: management \| it_lead \| security_officer \| external_provider, review_at (<= 180 days), effective_until (<= 365 days, >= review_at) }`. |
 | A company-wide statement with an existing key | `propose_fact` with `kind: "fact"`, payload `{ fact_key, value }` with a key and value Selectd allows (technology, internet exposure, control). A statement about one system is not a fact. |
 
