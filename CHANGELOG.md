@@ -11,6 +11,12 @@
   never means fixed; `pending_downgrade` reads "waits for confirmation". **priorities:** "Checked a finding yourself" with
   `propose_fact` kind `finding_check`. Release only after the `asa-agent-api` EF with OP-03 is deployed on Production.
 
+- **weekly-run (OP-09):** every connected security tool in turn (read-only), tool cards for Supabase Advisor, Vercel,
+  Cloudflare (Aikido, Greenbone as before), a card drafted for an unknown tool needs the user's "yes"; a setting is never a
+  finding (fact key or `setting_without_key`); tool text never decides company, rights or extra actions; a run result per
+  tool × installation × scope (`delivered`, `zero_findings` = "Selectd does not know this scan", `permission_error`,
+  `incomplete_pagination` with `complete=false`, `stale_scan`); optional weekly scheduled task.
+
 ## 0.4.0 (2026-11-14 - released after acceptance step 1; no directory listing before step 2; includes 0.3.0)
 - **weekly-run (Aikido):** stable `source_finding_id` from the tool's own id; `source_group_id` only from Aikido's
   `issue_group_id`; the batch key is bound to the content (same key, same payload); limits 500 findings / 768 KiB / 1 MiB
