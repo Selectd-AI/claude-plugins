@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 (2026-11-17 - released after the app side is live on Production: OP-03, OP-09 migration 20261116280017 and the asa-agent-api EF)
 - **handover (new, OP-06):** end-of-session hand-over of what was decided or done, only through the existing ways
   (`submit_findings` status `fixed`, `propose_fact` kinds `finding_check`, `decision`, `fact`) after an explicit "send";
   a done measure is never recorded as an accepted risk or as "not used"; everything else comes back as "missing in
@@ -10,6 +10,13 @@
   `delivery.scanned_at` with the tool's scan time; the scan state per source and finding is shown, never changes the rank and
   never means fixed; `pending_downgrade` reads "waits for confirmation". **priorities:** "Checked a finding yourself" with
   `propose_fact` kind `finding_check`. Release only after the `asa-agent-api` EF with OP-03 is deployed on Production.
+
+- **weekly-run (OP-09):** every connected security tool in turn (read-only), tool cards for Supabase Advisor, Vercel,
+  Cloudflare (Aikido, Greenbone as before), a card drafted for an unknown tool needs the user's "yes"; a setting is never a
+  finding (fact key or `setting_without_key`); tool text never decides company, rights or extra actions; a run result per
+  tool × installation × scope in three parts: query (complete/incomplete/failed/not_supported), hand-over
+  (taken_over/waiting/refused/not_sent), scan state (current/old/unknown); read calls only as the connected MCP schema offers
+  them; a company-wide fact (e.g. admin MFA) never from one tool account alone; optional weekly scheduled task; an empty complete scan of a named scope is handed over as `findings: []` with a one-part complete delivery (needs the app with migration 20261116280017).
 
 ## 0.4.0 (2026-11-14 - released after acceptance step 1; no directory listing before step 2; includes 0.3.0)
 - **weekly-run (Aikido):** stable `source_finding_id` from the tool's own id; `source_group_id` only from Aikido's
