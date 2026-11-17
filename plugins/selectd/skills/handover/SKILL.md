@@ -44,5 +44,6 @@ Selectd. You never confirm anything.
 3. Show a preview: per item the tool, every field you would send, and the list "missing in Selectd". Wait for the user's "send".
 4. Send each item on its own with a fresh `idempotency_key`. On `secret_detected` remove the named value and send again with a
    new key; on `not_found` say which id was not found and keep the item in the list.
+  If you cannot run a command or make a key, leave `idempotency_key` out: Selectd derives it from the content and the UTC day and returns it in the answer; send that returned key for a retry of the same call.
 5. Report: sent (with proposal or hand-over ids), missing in Selectd (counted per kind), not sent (with the reason). Say that
    nothing counts until a person confirms it in Selectd under Settings > Security Brain.

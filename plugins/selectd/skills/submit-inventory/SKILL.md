@@ -42,6 +42,7 @@ Never send IP addresses, user names, passwords, keys or file contents.
   commands. For a list the user pasted or collected earlier, use its original collection time; if that time is not known,
   ask for it or collect again. Never use the time of sending – an old list would otherwise look like a fresh observation.
 - `idempotency_key` = a new key per list (8–120 chars, `A-Za-z0-9._:-`); reuse it only to retry the same list
+  If you cannot run a command or make a key, leave `idempotency_key` out: Selectd derives it from the content and the UTC day and returns it in the answer; send that returned key for a retry of the same call.
 - `rows` = at most 500 entries
 
 ## Before sending

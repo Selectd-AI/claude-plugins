@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+- **submit-inventory, handover, brain-interview, ingest-scanner-export, ingest-pentest-report:** without a shell, leave `idempotency_key` out;
+  Selectd derives it from the content and the UTC day and returns it for a retry (needs the app's `asa-agent-api` with derived keys for
+  `submit_inventory` and `propose_fact`).
+
 ## 0.5.1 (2026-11-17 - released after the app's asa-agent-api with the derived key is live on Production)
 - **weekly-run without a shell:** an assistant that cannot run a command leaves `idempotency_key` out; Selectd derives it from
   the content and the UTC day and returns it for a retry (needs the app's `asa-agent-api` with the derived key). No byte
