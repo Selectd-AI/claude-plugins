@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.1 (2026-11-17 - released after the app's asa-agent-api with the derived key is live on Production)
 - **weekly-run without a shell:** an assistant that cannot run a command leaves `idempotency_key` out; Selectd derives it from
   the content and the UTC day and returns it for a retry (needs the app's `asa-agent-api` with the derived key). No byte
   counting without a shell: batches of at most 100 findings, split on `payload_too_large`, a refused single finding is named
