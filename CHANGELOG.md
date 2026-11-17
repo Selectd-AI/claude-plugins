@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+- **handover:** a fifth way, `propose_fact` kind `measure` (OP-24): one measure on one named system, one statement per resource, never a
+  secret value; `control_tested` needs its scope. "Measure without finding" is no longer a missing kind; process steps stay in the
+  engineering log (needs the app's measure path, migrations 20261117190017-190037).
 - **submit-inventory, handover, brain-interview, ingest-scanner-export, ingest-pentest-report:** without a shell, leave `idempotency_key` out;
   Selectd derives it from the content and the UTC day and returns it for a retry (needs the app's `asa-agent-api` with derived keys for
   `submit_inventory` and `propose_fact`).
