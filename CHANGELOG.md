@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 (2026-11-17 - released after the app side is live on Production: OP-03, OP-09 migration 20261116280017 and the asa-agent-api EF)
 - **handover (new, OP-06):** end-of-session hand-over of what was decided or done, only through the existing ways
   (`submit_findings` status `fixed`, `propose_fact` kinds `finding_check`, `decision`, `fact`) after an explicit "send";
   a done measure is never recorded as an accepted risk or as "not used"; everything else comes back as "missing in
