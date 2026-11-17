@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 (2026-11-17 - released after the app's asa-agent-api with the derived key is live on Production)
+- **weekly-run without a shell:** an assistant that cannot run a command leaves `idempotency_key` out; Selectd derives it from
+  the content and the UTC day and returns it for a retry (needs the app's `asa-agent-api` with the derived key). No byte
+  counting without a shell: batches of at most 100 findings, split on `payload_too_large`, a refused single finding is named
+  as not handed over. Overlong titles: the only allowed shortening, a marked 197-character prefix plus "…".
+
 ## 0.5.0 (2026-11-17 - released after the app side is live on Production: OP-03, OP-09 migration 20261116280017 and the asa-agent-api EF)
 - **handover (new, OP-06):** end-of-session hand-over of what was decided or done, only through the existing ways
   (`submit_findings` status `fixed`, `propose_fact` kinds `finding_check`, `decision`, `fact`) after an explicit "send";
