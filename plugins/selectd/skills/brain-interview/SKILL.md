@@ -80,6 +80,7 @@ Field rules:
 - `idempotency_key` = one new key per call when you build the preview (e.g. `bi-` + 24 random hex characters, 8-120 of
   `A-Za-z0-9._:-`). Reuse it **only** to retry exactly the same call after an error without answer; any change gives a new
   key (a used key with other content is refused as `conflict`).
+  If you cannot run a command or make a key, leave `idempotency_key` out: Selectd derives it from the content and the UTC day and returns it in the answer; send that returned key for a retry of the same call.
 - `note` (proposals, optional, at most 500 characters): e.g. `Stated by the user in an interview on <date>`; no secrets, no
   personal data.
 - At most 500 rows per `submit_inventory` call; a `propose_fact` payload stays far below its 4,000 character limit.
