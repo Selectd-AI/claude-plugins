@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.2 (2026-11-19)
+- **weekly-run (OP-09):** read Cloudflare Security Center Insights over the official API MCP and add an optional
+  project-scoped Vercel Security Review CLI fallback.
+- Validate provider responses and pagination, preserve source identities, and hand over findings as deltas when
+  the provider has no completed scan timestamp for the scope.
+
 ## 0.5.1 (2026-11-17 - released after the app's asa-agent-api with the derived key is live on Production)
 - **weekly-run without a shell:** an assistant that cannot run a command leaves `idempotency_key` out; Selectd derives it from
   the content and the UTC day and returns it for a retry (needs the app's `asa-agent-api` with the derived key). No byte
