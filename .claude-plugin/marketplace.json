@@ -10,7 +10,13 @@
   "plugins": [
     {
       "name": "selectd",
-      "source": "./plugins/selectd",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/Selectd-AI/claude-plugins.git",
+        "path": "plugins/selectd",
+        "ref": "v0.5.2",
+        "sha": "e049bae11bfb18532c0b312a8c4a8e0e241eab5c"
+      },
       "description": "Selectd Security Brain in Claude Code: check_cve, submit_inventory, weekly findings review, document recipes (pentest report, scanner export, questionnaire), a guided interview and a status report, via the Selectd MCP server with browser sign-in."
     }
   ]
