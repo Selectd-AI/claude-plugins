@@ -1,12 +1,19 @@
 # Changelog
 
 ## Unreleased
+- **advisory-check (OP-32):** review the 20 recommendations in FBI FLASH-20261113-001 using bounded, read-only Security Brain context.
 - **handover:** a fifth way, `propose_fact` kind `measure` (OP-24): one measure on one named system, one statement per resource, never a
   secret value; `control_tested` needs its scope. "Measure without finding" is no longer a missing kind; process steps stay in the
   engineering log (needs the app's measure path, migrations 20261117190017-190037).
 - **submit-inventory, handover, brain-interview, ingest-scanner-export, ingest-pentest-report:** without a shell, leave `idempotency_key` out;
   Selectd derives it from the content and the UTC day and returns it for a retry (needs the app's `asa-agent-api` with derived keys for
   `submit_inventory` and `propose_fact`).
+
+## 0.5.2 (2026-11-19)
+- **weekly-run (OP-09):** read Cloudflare Security Center Insights over the official API MCP and add an optional
+  project-scoped Vercel Security Review CLI fallback.
+- Validate provider responses and pagination, preserve source identities, and hand over findings as deltas when
+  the provider has no completed scan timestamp for the scope.
 
 ## 0.5.1 (2026-11-17 - released after the app's asa-agent-api with the derived key is live on Production)
 - **weekly-run without a shell:** an assistant that cannot run a command leaves `idempotency_key` out; Selectd derives it from
