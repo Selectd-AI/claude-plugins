@@ -1,7 +1,7 @@
 # Changelog
 
-## Unreleased
-- **advisory-check (OP-32):** review the 20 recommendations in FBI FLASH-20261113-001 using bounded, read-only Security Brain context.
+## 0.5.3 (2026-11-20)
+- **advisory-check (OP-32):** review the 20 recommendations in FBI FLASH-20261113-001 using bounded, read-only Security Brain context. If an MCP client drops a selector, reconnect and verify the current tool schema before retrying.
 - **handover:** a fifth way, `propose_fact` kind `measure` (OP-24): one measure on one named system, one statement per resource, never a
   secret value; `control_tested` needs its scope. "Measure without finding" is no longer a missing kind; process steps stay in the
   engineering log (needs the app's measure path, migrations 20261117190017-190037).
