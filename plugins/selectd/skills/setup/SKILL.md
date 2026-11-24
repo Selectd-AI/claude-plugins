@@ -35,8 +35,29 @@ The Selectd MCP server (`selectd`) uses a browser sign-in (OAuth). No token is c
 | expired (90 days) | Connections last 90 days. Repeat step 2. |
 | revoked | An admin removed this connection in Selectd → Settings → Integrations. |
 
+## Session context (optional, Pro)
+
+With a read-only key the plugin loads the company security context once at the start of each Claude Code session (a
+SessionStart hook, at most about 9,000 characters: pins, confirmed decisions with their reasons, current measures, systems,
+top priorities). The agent then answers from it directly instead of fetching it first. Without a key the hook prints nothing.
+
+1. An owner or admin creates a key in Selectd under Settings → Integrations → AI assistants with ONLY the permissions
+   **context:read** and **priorities:read** (no submitting permission), valid for up to 90 days. It is shown once.
+2. The user runs this in **their own terminal**, not in this chat, and pastes the key at the hidden prompt:
+   `node "<plugin folder>/hooks/store-key.mjs"` (Claude Code shows the plugin folder under /plugin). The script checks the key
+   once against Selectd and stores it in the OS credential store (macOS Keychain, Linux Secret Service via `secret-tool`,
+   Windows DPAPI for the current user). Without a credential store nothing is stored.
+3. The next Claude Code session starts with the context. Remove everything with `node "<plugin folder>/hooks/store-key.mjs" --remove`.
+
+Renewal: from day 76 after storing, the context carries a note; create a new key and run step 2 again. A revoked or expired
+key is refused by Selectd and the hook stays silent. The hook keeps an encrypted copy for 15 minutes (per key), runs only on a
+new session and after /clear (not on resume or compact) and never blocks the start for long: the credential store gets at most
+4 seconds and Selectd at most 8 (first start; later starts use the 15-minute copy), then the session starts without it. It needs Node.js 18 or newer on the PATH; without it the
+hook does nothing. Each fetch counts as two reads (context and priorities) against the plan limit and appears in the Selectd log.
+
 ## Rules
 
-- Never ask the user to paste a password or token into the chat.
+- Never ask the user to paste a password or token into the chat. The session-context key goes only into the hidden prompt of
+  `store-key.mjs` in the user's own terminal.
 - To switch company or account: an admin revokes the connection in Selectd (Settings → Integrations → AI assistants → Connections), then repeat step 2.
 - Data note: the AI service receives the assessments you ask for and, when you send a software list, the list including the host name. Selectd does not search your systems.
