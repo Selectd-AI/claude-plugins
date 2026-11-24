@@ -13,10 +13,16 @@ export const KEY_SHAPE = /^sak_[0-9a-f]{64}$/;
 export const MAX_CONTEXT_CHARS = 9500; // Claude Code 2.1.328 passed hook context whole up to 9,500 characters and moved 10,500 to a file (Selectd probe 2026-11-24); server cap 9,000
 export const CACHE_TTL_MS = 15 * 60 * 1000;
 export const STALE_OK_MS = 24 * 60 * 60 * 1000;
-export const HTTP_TIMEOUT_MS = 3000;
+export const HTTP_TIMEOUT_MS = 8000; // Prod overview took 3.6-7.4 s warm (Selectd measurement 2026-11-24); the server reads overview + priorities
 export const STORE_TIMEOUT_MS = 4000; // Windows DPAPI via PowerShell took 0.5-1.75 s per call in Selectd tests (2026-11-24); headroom for cold starts
 export const WARN_AFTER_DAYS = 76; // keys live at most 90 days
 const SERVICE = "selectd-session-context";
+
+/** Pasted keys arrive with bracketed-paste markers (ESC[200~ ... ESC[201~) in raw mode; strip escape sequences and whitespace. */
+export function cleanKeyInput(raw) {
+  const ESC = String.fromCharCode(27);
+  return String(raw ?? "").split(ESC).map((part, i) => (i === 0 ? part : part.replace(/^\[[0-9;]*[A-Za-z~]/, ""))).join("").trim();
+}
 
 export const keyId = (key) => createHash("sha256").update(key).digest("hex").slice(0, 16);
 

@@ -3,7 +3,7 @@
 //   node "<plugin>/hooks/store-key.mjs"            asks for the key without echo, checks it once, stores it
 //   node "<plugin>/hooks/store-key.mjs" --remove   deletes key, cache and metadata
 // The key is never taken from an argument or an environment variable, and never pasted into the chat.
-import { dataDir, fetchContext, KEY_SHAPE, keyStore, removeAllCaches, storeAndVerify, writeMeta, metaFile } from "./lib.mjs";
+import { cleanKeyInput, dataDir, fetchContext, KEY_SHAPE, keyStore, removeAllCaches, storeAndVerify, writeMeta, metaFile } from "./lib.mjs";
 import { rmSync } from "node:fs";
 
 const dir = dataDir(); const store = keyStore({ dir });
@@ -35,7 +35,7 @@ if (process.argv.includes("--remove")) {
 }
 
 try {
-  const key = (await hiddenPrompt("Selectd read-only key (sak_..., input hidden): ")).trim();
+  const key = cleanKeyInput(await hiddenPrompt("Selectd read-only key (sak_..., input hidden): "));
   if (!KEY_SHAPE.test(key)) throw new Error("this is not a Selectd console key (sak_ followed by 64 hex characters)");
   const check = await fetchContext(key, null, { timeoutMs: 10000 });
   if (check.kind === "unauthorized") throw new Error("Selectd refused the key (revoked, expired or not a console key)");

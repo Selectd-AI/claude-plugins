@@ -6,7 +6,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { removeAllCaches, storeAndVerify, cacheFile, decryptCache, encryptCache, expiryNote, hookOutput, keyStore, readCache, sessionText, writeCache, writeMeta, CACHE_TTL_MS, MAX_CONTEXT_CHARS } from "./lib.mjs";
+import { cleanKeyInput, HTTP_TIMEOUT_MS, removeAllCaches, storeAndVerify, cacheFile, decryptCache, encryptCache, expiryNote, hookOutput, keyStore, readCache, sessionText, writeCache, writeMeta, CACHE_TTL_MS, MAX_CONTEXT_CHARS } from "./lib.mjs";
 
 const KEY_A = "sak_" + "a".repeat(64), KEY_B = "sak_" + "b".repeat(64);
 const dir = () => mkdtempSync(join(tmpdir(), "selectd-hook-"));
@@ -57,7 +57,7 @@ test("network failure or timeout: stale cache up to 24 h, otherwise nothing; nev
   const hang = (_u, init) => new Promise((_r, rej) => init.signal.addEventListener("abort", () => rej(new Error("aborted"))));
   const t0 = Date.now();
   assert.equal(await sessionText({ store: store(KEY_A), dir: dir(), fetchImpl: hang }), null);
-  assert.ok(Date.now() - t0 < 4000, "gives up after the 3 s budget");
+  assert.ok(Date.now() - t0 < HTTP_TIMEOUT_MS + 1000, "gives up after the HTTP budget");
   assert.equal(await sessionText({ store: { get: () => { throw new Error("store broken"); } }, dir: dir(), fetchImpl: boom }), null);
 });
 
@@ -103,3 +103,11 @@ test("hook script: without a stored key it prints nothing and exits 0", { skip: 
   assert.equal(r.status, 0); assert.equal(r.stdout, "");
   assert.equal(existsSync(join(empty, "selectd", "session-key.dpapi")), false);
 });
+
+test("review 2: bracketed paste and other escape sequences around the key are removed", () => {
+  const ESC = String.fromCharCode(27); const key = "sak_" + "c".repeat(64);
+  assert.equal(cleanKeyInput(ESC + "[200~" + key + ESC + "[201~"), key);
+  assert.equal(cleanKeyInput("  " + key + String.fromCharCode(13)), key);
+});
+
+test("review 2: the Selectd call gets 8 s (Prod overview measured 3.6-7.4 s warm)", () => { assert.equal(HTTP_TIMEOUT_MS, 8000); });
