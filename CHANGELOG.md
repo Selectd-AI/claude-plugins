@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0 (unreleased - release after the app's asa-agent-api with POST /v2/session_context and the selectd.ai rewrite are live on Production)
+- **Session context (new, opt-in, Pro):** a SessionStart hook (`hooks/hooks.json`, matcher `startup`) loads the company security
+  context once per new session from `POST /api/v2/session_context` (at most ~9,000 characters), so the agent answers from it instead
+  of fetching it first (measured on 6 tasks against a same-day control: raw tokens -39 %, model rounds -45 %, raw reads -87 %, required
+  points 74 % vs 23 %). **After this update the hook runs automatically on every new session**; without a stored key it prints nothing.
+- Read-only console key (`context:read`, `priorities:read`) stored by `hooks/store-key.mjs` from a hidden terminal prompt into the OS
+  credential store (Keychain / Secret Service / Windows DPAPI); never via chat, argument or environment. Encrypted 15-minute cache per
+  key (HKDF-SHA256, AES-256-GCM), 3-second fail-open, renewal note from day 76. Tests: `node --test plugins/selectd/hooks/lib.test.mjs`.
+
 ## 0.5.3 (2026-11-20)
 - **advisory-check (OP-32):** review the 20 recommendations in FBI FLASH-20261113-001 using bounded, read-only Security Brain context. If an MCP client drops a selector, reconnect and verify the current tool schema before retrying.
 - **handover:** a fifth way, `propose_fact` kind `measure` (OP-24): one measure on one named system, one statement per resource, never a
