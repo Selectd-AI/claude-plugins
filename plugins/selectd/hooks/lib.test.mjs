@@ -96,7 +96,8 @@ test("review fixes: unwritable cache still shows the context; future fetchedAt i
   storeAndVerify({ v: null, set(k) { this.v = k; }, get() { return this.v; } }, KEY_A);
 });
 
-test("hook script: without a stored key it prints nothing and exits 0", () => {
+// hermetic only on Windows (DPAPI blob under the overridden LOCALAPPDATA); elsewhere it would read the real Keychain/Secret Service
+test("hook script: without a stored key it prints nothing and exits 0", { skip: process.platform !== "win32" }, () => {
   const empty = dir(); const script = fileURLToPath(new URL("./session-context.mjs", import.meta.url));
   const r = spawnSync(process.execPath, [script], { encoding: "utf8", timeout: 15000, env: { ...process.env, LOCALAPPDATA: empty, XDG_CACHE_HOME: empty } });
   assert.equal(r.status, 0); assert.equal(r.stdout, "");
