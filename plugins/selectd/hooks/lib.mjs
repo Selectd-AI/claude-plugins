@@ -4,17 +4,17 @@
 // there is no plaintext fallback. Every failure is silent towards the session (fail-open): the hook prints nothing and exits 0.
 import { createCipheriv, createDecipheriv, createHash, hkdfSync, randomBytes } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
 export const ENDPOINT = "https://selectd.ai/api/v2/session_context";
 export const KEY_SHAPE = /^sak_[0-9a-f]{64}$/;
-export const MAX_CONTEXT_CHARS = 9500; // Claude Code passes hook context whole up to ~10,000 characters (probe 2026-11-24); server cap 9,000
+export const MAX_CONTEXT_CHARS = 9500; // Claude Code 2.1.328 passed hook context whole up to 9,500 characters and moved 10,500 to a file (Selectd probe 2026-11-24); server cap 9,000
 export const CACHE_TTL_MS = 15 * 60 * 1000;
 export const STALE_OK_MS = 24 * 60 * 60 * 1000;
 export const HTTP_TIMEOUT_MS = 3000;
-export const STORE_TIMEOUT_MS = 4000; // measured 2026-11-24 on Windows: DPAPI via PowerShell store 1.75 s, read 0.98 s
+export const STORE_TIMEOUT_MS = 4000; // Windows DPAPI via PowerShell took 0.5-1.75 s per call in Selectd tests (2026-11-24); headroom for cold starts
 export const WARN_AFTER_DAYS = 76; // keys live at most 90 days
 const SERVICE = "selectd-session-context";
 
@@ -51,6 +51,8 @@ export function writeCache(dir, apiKey, obj) {
   writeFileSync(cacheFile(dir, apiKey), encryptCache(apiKey, obj), { mode: 0o600 });
 }
 export function removeCache(dir, apiKey) { try { rmSync(cacheFile(dir, apiKey), { force: true }); } catch { /* nothing to remove */ } }
+/** All session caches, also those of earlier keys (renewal, --remove). */
+export function removeAllCaches(dir) { try { for (const f of readdirSync(dir)) if (/^session-[0-9a-f]{16}\.bin$/.test(f)) rmSync(join(dir, f), { force: true }); } catch { /* no dir */ } }
 
 // ---- key metadata (not secret): when the key was stored, for the expiry note ----
 export const metaFile = (dir) => join(dir, "session-key.json");
@@ -115,19 +117,25 @@ export async function sessionText({ store, dir, now = Date.now(), fetchImpl = fe
   let apiKey = null;
   try { apiKey = store.get(); } catch { apiKey = null; }
   if (!apiKey || !KEY_SHAPE.test(apiKey)) return null; // not set up: silent
-  const cached = readCache(dir, apiKey);
+  let cached = readCache(dir, apiKey);
+  if (cached && cached.fetchedAt > now) cached = { ...cached, fetchedAt: Number.NEGATIVE_INFINITY }; // clock set back: treat as stale, never pin it
   const note = expiryNote(readMeta(dir), now);
   if (cached && now - cached.fetchedAt < CACHE_TTL_MS) return cached.text + note;
   const r = await fetchContext(apiKey, cached?.etag ?? null, { fetchImpl, url });
   if (r.kind === "ok") {
     if (r.text.length > MAX_CONTEXT_CHARS) { log("context larger than the hook limit, not shown"); return null; }
-    writeCache(dir, apiKey, { text: r.text, etag: r.etag, fetchedAt: now }); return r.text + note;
+    safeWriteCache(dir, apiKey, { text: r.text, etag: r.etag, fetchedAt: now }, log); return r.text + note;
   }
-  if (r.kind === "unchanged" && cached) { writeCache(dir, apiKey, { ...cached, fetchedAt: now }); return cached.text + note; }
+  if (r.kind === "unchanged" && cached) { safeWriteCache(dir, apiKey, { ...cached, fetchedAt: now }, log); return cached.text + note; }
   if (r.kind === "unauthorized") { removeCache(dir, apiKey); log("Selectd session key refused (revoked or expired); renew it with the setup skill"); return null; }
   if (r.kind === "not_available") { removeCache(dir, apiKey); return null; }
   log(`Selectd session context unavailable (${r.status ?? "?"})`);
   return cached && now - cached.fetchedAt < STALE_OK_MS ? cached.text + note : null;
 }
+
+function safeWriteCache(dir, apiKey, obj, log) { try { writeCache(dir, apiKey, obj); } catch { log("cache not writable; context shown without caching"); } }
+
+/** Stores the key and reads it back; a store that reports success without keeping the key fails (macOS security -i risk). */
+export function storeAndVerify(store, key) { store.set(key); let back = null; try { back = store.get(); } catch { back = null; } if (back !== key) throw new Error("the credential store did not keep the key"); }
 
 export const hookOutput = (text) => JSON.stringify({ hookSpecificOutput: { hookEventName: "SessionStart", additionalContext: text } });

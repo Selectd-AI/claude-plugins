@@ -3,7 +3,7 @@
 //   node "<plugin>/hooks/store-key.mjs"            asks for the key without echo, checks it once, stores it
 //   node "<plugin>/hooks/store-key.mjs" --remove   deletes key, cache and metadata
 // The key is never taken from an argument or an environment variable, and never pasted into the chat.
-import { dataDir, fetchContext, KEY_SHAPE, keyStore, removeCache, writeMeta, metaFile } from "./lib.mjs";
+import { dataDir, fetchContext, KEY_SHAPE, keyStore, removeAllCaches, storeAndVerify, writeMeta, metaFile } from "./lib.mjs";
 import { rmSync } from "node:fs";
 
 const dir = dataDir(); const store = keyStore({ dir });
@@ -27,8 +27,7 @@ function hiddenPrompt(question) {
 }
 
 if (process.argv.includes("--remove")) {
-  let key = null; try { key = store.get(); } catch { key = null; }
-  if (key) removeCache(dir, key);
+  removeAllCaches(dir);
   try { store.remove(); } catch { /* already gone */ }
   rmSync(metaFile(dir), { force: true });
   process.stdout.write("Selectd session key, cache and metadata removed.\n");
@@ -41,7 +40,8 @@ try {
   const check = await fetchContext(key, null, { timeoutMs: 10000 });
   if (check.kind === "unauthorized") throw new Error("Selectd refused the key (revoked, expired or not a console key)");
   if (check.kind === "error") throw new Error(`Selectd could not be reached (status ${check.status}); nothing stored`);
-  store.set(key);
+  storeAndVerify(store, key);
+  removeAllCaches(dir); // caches of an earlier key go with it
   writeMeta(dir, { storedAt: new Date().toISOString() });
   process.stdout.write(`Stored in ${store.name}.${check.kind === "not_available" ? " Note: this company or key has no access to the security context (Pro plan and the permissions context:read, priorities:read)." : ""}\n`);
   process.exit(0);

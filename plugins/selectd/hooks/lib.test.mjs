@@ -1,10 +1,12 @@
 // node --test plugins/selectd/hooks/lib.test.mjs  (no network, no real credential store)
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { cacheFile, decryptCache, encryptCache, expiryNote, hookOutput, keyStore, readCache, sessionText, writeCache, writeMeta, CACHE_TTL_MS, MAX_CONTEXT_CHARS } from "./lib.mjs";
+import { removeAllCaches, storeAndVerify, cacheFile, decryptCache, encryptCache, expiryNote, hookOutput, keyStore, readCache, sessionText, writeCache, writeMeta, CACHE_TTL_MS, MAX_CONTEXT_CHARS } from "./lib.mjs";
 
 const KEY_A = "sak_" + "a".repeat(64), KEY_B = "sak_" + "b".repeat(64);
 const dir = () => mkdtempSync(join(tmpdir(), "selectd-hook-"));
@@ -80,5 +82,23 @@ test("key store passes the key only on stdin, never as an argument (all three pl
   for (const platform of ["win32", "darwin", "linux"]) keyStore({ platform, run, dir: d }).set(KEY_A);
   for (const c of calls) assert.equal(c.args.some((a) => a.includes(KEY_A)), false, `${c.cmd} got the key as an argument`);
   assert.ok(calls.every((c) => typeof c.input === "string" && c.input.includes(KEY_A)), "key goes over stdin");
-  writeFileSync(join(d, "x"), "");
+});
+
+test("review fixes: unwritable cache still shows the context; future fetchedAt is stale; all caches removed; store verified", async () => {
+  const fileNotDir = join(dir(), "plain-file"); writeFileSync(fileNotDir, "x");
+  assert.equal(await sessionText({ store: store(KEY_A), dir: fileNotDir, fetchImpl: () => reply(200, { status: "ok", text: "CTX", etag: null }) }), "CTX");
+  const d = dir(); writeCache(d, KEY_A, { text: "OLD", etag: null, fetchedAt: 10 * CACHE_TTL_MS });
+  const f = counter(() => reply(200, { status: "ok", text: "NEW", etag: null }));
+  assert.equal(await sessionText({ store: store(KEY_A), dir: d, now: 1000, fetchImpl: f }), "NEW"); assert.equal(f.calls.length, 1);
+  writeCache(d, KEY_B, { text: "B", etag: null, fetchedAt: 1 }); removeAllCaches(d);
+  assert.deepEqual(readdirSync(d).filter((x) => x.startsWith("session-")), []);
+  assert.throws(() => storeAndVerify({ set() {}, get: () => null }, KEY_A), /did not keep/);
+  storeAndVerify({ v: null, set(k) { this.v = k; }, get() { return this.v; } }, KEY_A);
+});
+
+test("hook script: without a stored key it prints nothing and exits 0", () => {
+  const empty = dir(); const script = fileURLToPath(new URL("./session-context.mjs", import.meta.url));
+  const r = spawnSync(process.execPath, [script], { encoding: "utf8", timeout: 15000, env: { ...process.env, LOCALAPPDATA: empty, XDG_CACHE_HOME: empty } });
+  assert.equal(r.status, 0); assert.equal(r.stdout, "");
+  assert.equal(existsSync(join(empty, "selectd", "session-key.dpapi")), false);
 });

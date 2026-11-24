@@ -51,8 +51,9 @@ top priorities). The agent then answers from it directly instead of fetching it 
 
 Renewal: from day 76 after storing, the context carries a note; create a new key and run step 2 again. A revoked or expired
 key is refused by Selectd and the hook stays silent. The hook keeps an encrypted copy for 15 minutes (per key), runs only on a
-new session (not on resume or compact) and never blocks the start: after 3 seconds without an answer the session starts
-without it. Each fetch counts as two reads (context and priorities) against the plan limit and appears in the Selectd log.
+new session and after /clear (not on resume or compact) and never blocks the start for long: the credential store gets at most
+4 seconds and Selectd at most 3, then the session starts without it. It needs Node.js 18 or newer on the PATH; without it the
+hook does nothing. Each fetch counts as two reads (context and priorities) against the plan limit and appears in the Selectd log.
 
 ## Rules
 
