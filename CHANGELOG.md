@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.6.0 (unreleased - release after the app's asa-agent-api with POST /v2/session_context and the selectd.ai rewrite are live on Production)
+## 0.6.0 (2026-11-25 - released after the app side went live on Production: POST /v2/session_context #3350/#3351 and the selectd.ai rewrite, promote dpl_GSqaRKHTA9qgHM4gbua6cgqSSZPo)
 - **Session context (new, opt-in, Pro):** a SessionStart hook (`hooks/hooks.json`, matcher `startup`) loads the company security
   context once per new session from `POST /api/v2/session_context` (at most ~9,000 characters), so the agent answers from it instead
   of fetching it first. **After this update the hook runs automatically on every new session and after /clear**; without a stored key
