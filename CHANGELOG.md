@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1 (2026-11-25)
+
+- **check-cve:** use a compact assessment when supported. Show the company verdict, assessed scope, inventory gaps, evidence and next action. Use the authorized Terminal link and include the revision when handing over the result.
+- Keep public CVE evidence separate from the company assessment. Use Selectd's public-source check for unresolved evidence and keep company details out of external searches.
+
 ## 0.6.0 (2026-11-25 - released after the app side went live on Production: POST /v2/session_context #3350/#3351 and the selectd.ai rewrite, promote dpl_GSqaRKHTA9qgHM4gbua6cgqSSZPo)
 - **Session context (new, opt-in, Pro):** a SessionStart hook (`hooks/hooks.json`, matcher `startup`) loads the company security
   context once per new session from `POST /api/v2/session_context` (at most ~9,000 characters), so the agent answers from it instead
